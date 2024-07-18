@@ -7,8 +7,11 @@
 
 #include "TIM_IT.h"
 
+bool reset = false;
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM8){
+		if(reset)	NVIC_SystemReset();
 		inverse_kinematics_model();
 		Encoder();
 		PID_PWM();

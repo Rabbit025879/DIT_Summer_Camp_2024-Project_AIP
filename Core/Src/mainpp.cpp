@@ -7,6 +7,8 @@
 
 #include "mainpp.h"
 
+int main_function_status = 0;
+
 // STM Setup
 void setup(){
 	  // Update Interrupt
@@ -26,6 +28,9 @@ void setup(){
 
 void main_function(){
 	setup();
+	main_function_status = 1;
 	HAL_Delay(1500);
+	main_function_status = 2;
 	do_path();
+	main_function_status = 3;
 }
