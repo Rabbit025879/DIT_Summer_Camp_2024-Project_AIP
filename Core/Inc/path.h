@@ -21,8 +21,6 @@ struct point{
 	double w = 0.0;
 };
 
-extern
-
 void do_path();
 
 #endif /* INC_PATH_H_ */

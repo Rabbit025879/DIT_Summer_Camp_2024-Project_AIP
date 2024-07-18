@@ -49,38 +49,6 @@ TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim8;
 
 /* USER CODE BEGIN PV */
-//command speed (robot coordinate System)
-//double Vx=0, Vy=0, W=0;
-//command speed (motor)
-double MF = 0, MR = 0, ML = 0;
-
-//real speed (robot coordinate System)
-//double rVx, rVy, rW;
-//real speed (motor)
-int16_t enc_MF, enc_MR, enc_ML;
-double rMF, rMR, rML;
-
-//PID_PWM
-double err_MF, inte_MF = 0, PID_MF = 0;
-double err_MR, inte_MR = 0, PID_MR = 0;
-double err_ML, inte_ML = 0, PID_ML = 0;
-
-const float kp_MR = 0.63478, ki_MR = 42.3571, kd_MR = 0;
-const float kp_MF = 0.62054, ki_MF = 48.2085, kd_MF = 0;
-const float kp_ML = 0.68042, ki_ML = 54.7149, kd_ML = 0;
-
-double cmnspeed = 1;
-
-double Vx_cmd=0;
-double Vy_cmd=0;
-double W_cmd=0;
-double ML_cmd=0;
-double MR_cmd=0;
-double MF_cmd=0;
-int run = 0;
-int straight_test_cnt = 0;
-
-//double inte_w = 0;
 
 /* USER CODE END PV */
 
@@ -316,7 +284,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4.294967295E9;
+  htim2.Init.Period = 65535;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   sConfig.EncoderMode = TIM_ENCODERMODE_TI12;

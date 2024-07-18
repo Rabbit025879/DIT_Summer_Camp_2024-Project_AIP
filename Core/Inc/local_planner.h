@@ -17,27 +17,12 @@ using namespace std;
 
 void pointToDist(const float xGoal, const float yGoal);
 void initParam();
-int stop();
 int moveTo();
 int moveCurve(double radius, double angleRad);
+int stop();
+float TF_World_to_Robot(float World);
+void cmd_vel_pub(float Vx_, float Vy_, float W_);
 
-float deltaTime = 0.001;
-/* global param */
-float realVelX = 0;
-float realVelY = 0;
-float realVelW = 0;
-float botPositionX = 0;
-float botPositionY = 0;
-float goalDistanceX;
-float goalDistanceY;
-float VelX, VelY, AngVelW;
-/* function param*/
-float xVelocityNow, yVelocityNow, zVelocityNow;
-float xMoved = 0, yMoved = 0;
-float remainX = goalDistanceX;
-float remainY = goalDistanceY;
-float lastRemainX = goalDistanceX;
-float lastRemainY = goalDistanceY;
 /* p control param */
 const float rad_p_control_0 = 0.1745329252;
 const float rad_p_control_1 = 0.5235988;
@@ -56,5 +41,8 @@ const float velocity_p_control_1 = 0.08;
 const float velocity_p_control_2 = 0.14;
 const float velocity_p_control_3 = 0.13;
 const float velocity_p_control_4 = 0.26;
+
+// cmd_vel
+extern double Vx, Vy, W;
 
 #endif /* INC_LOCAL_PLANNER_H_ */

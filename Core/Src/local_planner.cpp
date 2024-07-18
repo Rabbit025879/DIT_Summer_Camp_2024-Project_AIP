@@ -7,6 +7,24 @@
 
 #include "local_planner.h"
 
+float deltaTime = 0.001;
+/* global param */
+float realVelX = 0;
+float realVelY = 0;
+float realVelW = 0;
+float botPositionX = 0;
+float botPositionY = 0;
+float goalDistanceX;
+float goalDistanceY;
+
+/* function param*/
+float xVelocityNow, yVelocityNow, zVelocityNow;
+float xMoved = 0, yMoved = 0;
+float remainX = goalDistanceX;
+float remainY = goalDistanceY;
+float lastRemainX = goalDistanceX;
+float lastRemainY = goalDistanceY;
+
 void pointToDist(const float xGoal, const float yGoal){
     goalDistanceX = xGoal - botPositionX;
     goalDistanceY = yGoal - botPositionY;
@@ -19,7 +37,24 @@ void initParam(){
     remainY = lastRemainY = goalDistanceY;
 }
 
+// TODO: TF !!!
+// Transfer the world coordinate into robot coordinate
+float TF_World_to_Robot(float World){
+	float Robot = 0.0;
+
+	return Robot;
+}
+
+void cmd_vel_pub(float Vx_, float Vy_, float W_){
+	Vx = (double)Vx_;
+	Vy = (double)Vy_;
+	W = (double)W_;
+}
+
+// Return if it's arrived or not
 int moveTo(){
+	float VelX, VelY, AngVelW;
+	int is_arrived = 0;
     if (abs(remainX) > 0.001 && abs(lastRemainX) >= abs(remainX)){
         xMoved += realVelX * deltaTime;
         lastRemainX = remainX;
@@ -46,7 +81,7 @@ int moveTo(){
             VelX = -xVelocityNow;
         else
             VelX = xVelocityNow;
-        return 0;
+        is_arrived = 0;
     }
     else
         VelX = 0;
@@ -76,15 +111,26 @@ int moveTo(){
             VelY = -yVelocityNow;
         else
             VelY = yVelocityNow;
-        return 0;
+        is_arrived = 0;
     }
     else
         VelY = 0;
 
     if (VelX == 0 && VelY == 0)
-        return 1;
+        is_arrived = 1;
     else
-        return 0;
+        is_arrived = 0;
+
+    AngVelW = 0.0;
+
+    // Go through TF
+    VelX = TF_World_to_Robot(VelX);
+    VelY = TF_World_to_Robot(VelY);
+    AngVelW = TF_World_to_Robot(AngVelW);
+
+    // Publish the cmd_vel
+    cmd_vel_pub(VelX, VelY, AngVelW);
+
+    // Return the robot status
+    return is_arrived;
 }
-
-

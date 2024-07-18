@@ -25,19 +25,19 @@ void do_path(){
 
 // ------------------------------------------
 
-	int which_point = 0;
+	unsigned int which_point = 0;
 	if(global_planner_on)	return;	// TODO: Global planner processing
 	if(look_ahead_dis_on)	return;	// TODO: Check for finish
 	else{
 		while(which_point < path.size()-1){
 			// Publish the path point one by one
-			which_point++;
-			if (arrived == 1){
+			if(arrived == 1){
+				which_point++;
 				pointToDist(path[which_point].x, path[which_point].y);
 				initParam();
 			}
 			arrived = moveTo();
-			if(arrived)	break;
 		}
+		return;
 	}
 }

@@ -7,8 +7,6 @@
 
 #include "mainpp.h"
 
-float rVx, rVy, rW;
-
 // STM Setup
 void setup(){
 	  // Update Interrupt

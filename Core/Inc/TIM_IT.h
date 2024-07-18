@@ -10,12 +10,9 @@
 #ifndef INC_TIM_IT_H_
 #define INC_TIM_IT_H_
 
-void inverse_kinematics_model();
-void Encoder();
-void PID_PWM();
-void kinematics_model();
-
-extern TIM_HandleTypeDef htim8;
+#include "main.h"
+#include "mainpp.h"
+#include "wheel.h"
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
