@@ -44,5 +44,7 @@ const float velocity_p_control_4 = 0.26;
 
 // cmd_vel
 extern double Vx, Vy, W;
+// real velocity
+extern double rVx, rVy, rW;
 
 #endif /* INC_LOCAL_PLANNER_H_ */

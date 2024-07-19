@@ -13,7 +13,8 @@ double Vx, Vy, W;
 double MF, ML, MR;
 
 // encoder
-short int	enc_MF, enc_MR, enc_ML;
+short enc_MF, enc_MR;
+int enc_ML;
 // Real motor_vel
 double rMF, rML, rMR;
 // Real robot_vel
@@ -39,23 +40,23 @@ void inverse_kinematics_model(){
 
 // motor_vel to robot_vel
 void kinematics_model(){
-	double rWL = rMF*wheel_radius*(2*pi),
-		   rWF = rMR*wheel_radius*(2*pi),
-		   rWR = rML*wheel_radius*(2*pi);
+	double rWF = rMF*wheel_radius*(2*pi),
+		   rWL = rML*wheel_radius*(2*pi),
+		   rWR = rMR*wheel_radius*(2*pi);
 
-	rVx = -(1/(cos60+1))*rWF + (1/(cos60+1))*0.5*rWL + (1/(cos60+1))*0.5*rWR;
-	rVy = -(1/cos30)*0.5*rWL + (1/cos30)*0.5*rWR;
-	rW = (cos60/(cos60+1))*(1/chassis_radius)*rWF +(1/(cos60+1))*0.5*chassis_radius*rWL +(1/(cos60+1))*0.5*chassis_radius*rWR;
+	rVx = (-rWF + (rWL + rWR) / cos60) / 3;
+	rVy = ((rWR - rWL) / cos30) / 2;
+	rW = (rWF + rWL + rWR) / (3 * chassis_radius);
 }
 
 void Encoder(){
 	//front wheel motor
-	enc_MF = __HAL_TIM_GetCounter(&htim1);
+	enc_MF = -__HAL_TIM_GetCounter(&htim1);
 	rMF = (double) enc_MF / (4 * resolution * reductionratio) / motor_span; // revolution/s
 	__HAL_TIM_SetCounter(&htim1, 0);
 
 	//left wheel motor
-	enc_ML = __HAL_TIM_GetCounter(&htim2);
+	enc_ML = -__HAL_TIM_GetCounter(&htim2);
 	rML = (double) enc_ML / (4 * resolution * reductionratio) / motor_span; // revolution/s
 	__HAL_TIM_SetCounter(&htim2, 0);
 
@@ -67,14 +68,12 @@ void Encoder(){
 
 int pulse_MF, pulse_ML, pulse_MR;
 double inte_MF, inte_ML, inte_MR;
-double kp = 0.0;
-double ki = 0.0;
 
 void PID_PWM(){
 	//PID_MF
 	double err_MF = MF - rMF;
 	inte_MF += err_MF * motor_span;
-	double bound_MF = 1/ki;
+	double	bound_MF = 0.01;
 	if (ki * inte_MF > 1) inte_MF = bound_MF;
 	else if (ki * inte_MF < -1) inte_MF = -bound_MF;
 	float u_MF = kp * err_MF + ki * inte_MF;			// pulse
@@ -96,7 +95,7 @@ void PID_PWM(){
 	//PID_ML
 	double err_ML = ML - rML;
 	inte_ML += err_ML * motor_span;
-	double bound_ML = 1/ki;
+	double	bound_ML = 0.01;
 	if (ki * inte_ML > 1) inte_ML = bound_ML;
 	else if (ki * inte_ML < -1) inte_ML = -bound_ML;
 	float u_ML = kp * err_ML + ki * inte_ML;			// pulse
@@ -117,7 +116,7 @@ void PID_PWM(){
 	//PID_MR
 	double err_MR = MR - rMR;
 	inte_MR += err_MR * motor_span;
-	double bound_MR = 1/ki;
+	double	bound_MR = 0.01;
 	if (ki * inte_MR > 1) inte_MR = bound_MR;
 	else if (ki * inte_MR < -1) inte_MR = -bound_MR;
 	float u_MR = kp * err_MR + ki * inte_MR;			// pulse
@@ -126,12 +125,12 @@ void PID_PWM(){
 	//PWM_MR
 	if (u_MR > 0) {
 		pulse_MR = (int) (u_MR * (motorARR + 1));
-		HAL_GPIO_WritePin(INA_MR_PORT, INA_MR_PIN, GPIO_PIN_RESET); // INA
-		HAL_GPIO_WritePin(INB_MR_PORT, INB_MR_PIN, GPIO_PIN_SET); // INB
-	} else {
-		pulse_MR = (int) (-u_MR * (motorARR + 1));
 		HAL_GPIO_WritePin(INA_MR_PORT, INA_MR_PIN, GPIO_PIN_SET); // INA
 		HAL_GPIO_WritePin(INB_MR_PORT, INB_MR_PIN, GPIO_PIN_RESET); // INB
+	} else {
+		pulse_MR = (int) (-u_MR * (motorARR + 1));
+		HAL_GPIO_WritePin(INA_MR_PORT, INA_MR_PIN, GPIO_PIN_RESET); // INA
+		HAL_GPIO_WritePin(INB_MR_PORT, INB_MR_PIN, GPIO_PIN_SET); // INB
 	}
 	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, pulse_MR); // PWM
 }

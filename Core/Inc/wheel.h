@@ -17,7 +17,7 @@
 // Math constant
 #define pi 3.14159265359
 #define cos60 0.5
-#define cos30 0.8660254
+#define cos30 0.866025403784439
 
 // Motor data sheet
 #define resolution 256
@@ -25,13 +25,15 @@
 
 // Motor control
 #define motor_span 0.001
+#define kp 2.2
+#define ki 20.5
 
 // Motor PWM output
 #define motorARR 999 //ARR of TIM4
 
 // Chassis data
-#define chassis_radius 0.01 	// meter
-#define wheel_radius 0.0029 	// meter
+#define chassis_radius 0.1695 	// meter
+#define wheel_radius 0.029 	// meter
 
 // Pin names
 // MF
