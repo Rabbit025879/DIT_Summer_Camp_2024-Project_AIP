@@ -69,7 +69,7 @@ int moveTo()
 {
     float VelX, VelY, AngVelW;
     int is_arrived = 0;
-    if (abs(remainX) > 0.001 && abs(lastRemainX) >= abs(remainX))
+    if (abs(remainX) > 0.001)
     {
         xMoved += rVx * deltaTime;
         lastRemainX = remainX;
@@ -99,26 +99,24 @@ int moveTo()
     else
         VelX = 0;
 
-    if (remainY > 0.001 && abs(lastRemainY) >= abs(remainY))
+    if (abs(remainY) > 0.001)
     {
         yMoved += rVy * deltaTime;
         lastRemainY = remainY;
-        remainY = goalDistanceX - yMoved;
-        if (yMoved <= dist_0)
-            yVelocityNow = vel_0;
-        else if (yMoved <= dist_1)
-            yVelocityNow = vel_1;
-        else if (yMoved <= dist_2)
-            yVelocityNow = vel_2;
-        else if (remainY <= dist_0)
-            yVelocityNow = vel_0;
-        else if (remainY <= dist_1)
-            yVelocityNow = vel_1;
-        else if (remainY <= dist_2)
-            yVelocityNow = vel_2;
-        // It's too fast now, so I comment it
-        // else if (remainY <= dist_3)
-        //     yVelocityNow = vel_3;
+        remainY = goalDistanceY - yMoved;
+        if (abs(yMoved) <= dist_0)
+            yVelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0;
+        else if (abs(yMoved) <= dist_1)
+            yVelocityNow = (abs(xMoved) - dist_0) * 1.5 + vel_0;
+        else if (abs(yMoved) <= dist_2)
+            yVelocityNow = pow(((-abs(yMoved) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
+
+        else if (abs(remainY) <= dist_0)
+            yVelocityNow = pow(abs(remainY) / dist_0, 1.5) * vel_0;
+        else if (abs(remainY) <= dist_1)
+            yVelocityNow = (abs(remainY) - dist_0) * 1.5 + vel_0;
+        else if (abs(remainY) <= dist_2)
+            yVelocityNow = pow(((-abs(remainY) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
         else
             yVelocityNow = vel_2;
 
