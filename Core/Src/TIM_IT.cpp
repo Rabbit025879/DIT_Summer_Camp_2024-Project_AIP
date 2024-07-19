@@ -11,6 +11,7 @@ bool reset = false;
 unsigned int which_point = 0;
 int arrived = 1;
 int done = 0;
+int delay_cnt = 0;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM8){
@@ -21,8 +22,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 			pointToDist(path[which_point].x, path[which_point].y);
 			initParam();
 			which_point++;
+			arrived = 0;
 		}
-		if(arrived && which_point == path.size())	done = 1;
 		// calculate cmd_vel
 		arrived = moveTo();
 		// cmd_vel to motor_vel

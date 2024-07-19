@@ -53,7 +53,7 @@ float TF_World_to_Robot(float World){
 int moveTo(){
 	float VelX, VelY, AngVelW;
 	int is_arrived = 0;
-    if (abs(remainX) > 0.001 && abs(lastRemainX) >= abs(remainX)){
+    if (abs(remainX) > 0.001/* && abs(lastRemainX) >= abs(remainX)*/){
         xMoved += rVx * deltaTime;
         lastRemainX = remainX;
         remainX = goalDistanceX - xMoved;
@@ -83,10 +83,10 @@ int moveTo(){
     }
     else
         VelX = 0;
-    if (remainY > 0.001 && abs(lastRemainY) >= abs(remainY)){
+    if (remainY > 0.001 /*&& abs(lastRemainY) >= abs(remainY)*/){
         yMoved += rVy * deltaTime;
         lastRemainY = remainY;
-        remainY = goalDistanceX - yMoved;
+        remainY = goalDistanceY - yMoved;
         if (yMoved <= distance_p_control_0)
             yVelocityNow = velocity_p_control_0;
         else if (yMoved <= distance_p_control_1)
@@ -114,8 +114,11 @@ int moveTo(){
     else
         VelY = 0;
 
-    if (VelX == 0 && VelY == 0)
+    if (VelX == 0 && VelY == 0){
+    	botPositionX += xMoved;
+    	botPositionY += yMoved;
         is_arrived = 1;
+    }
     else
         is_arrived = 0;
 

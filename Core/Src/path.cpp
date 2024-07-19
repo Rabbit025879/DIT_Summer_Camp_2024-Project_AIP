@@ -17,11 +17,11 @@ void do_path(){
 	
 // ** Script
 // ------------------------------------------
-	buffer = {1.0, 1.0, 0.0};	// ** Modify path points
+	buffer = {0.3, 0.3, 0.0};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {1.0, 2.0, 0.0};	// ** Modify path points
+	buffer = {0.3, 0.6, 0.0};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {3.0, 2.0, 0.0};	// ** Modify path points
+	buffer = {0.6, 0.6, 0.0};	// ** Modify path points
 	path.push_back(buffer);
 //	buffer = {4.0, 3.0, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
