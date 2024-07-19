@@ -32,11 +32,11 @@ void do_path(){
 	//	path.push_back(buffer);
 	//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
 	//	path.push_back(buffer);
-		buffer = {0.0, 1.0, 0.0};	// ** Modify path points
+		buffer = {1.0, 0.0, 0.0};	// ** Modify path points
 		path.push_back(buffer);
 		buffer = {1.0, 1.0, 0.0};	// ** Modify path points
 		path.push_back(buffer);
-		buffer = {1.0, 0.0, 0.0};	// ** Modify path points
+		buffer = {0.0, 1.0, 0.0};	// ** Modify path points
 		path.push_back(buffer);
 		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
 		path.push_back(buffer);

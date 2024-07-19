@@ -32,7 +32,10 @@ const float omega_p_control_0 = 0.087266462599716;
 const float omega_p_control_1 = 0.174532925199433;
 const float omega_p_control_2 = 0.349065850398866;
 const float omega_p_control_3 = 0.523598775598299;
-
+const float maxVelocity = 0.325;
+const float vel_0 = 0.05;
+const float vel_1 = 0.275;
+const float vel_2 = 0.325;
 const float dist_0 = 0.05;
 const float dist_1 = 0.2;
 const float dist_2 = 0.25;
