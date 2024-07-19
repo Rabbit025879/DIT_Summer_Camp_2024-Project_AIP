@@ -83,21 +83,21 @@ int moveTo(){
     }
     else
         VelX = 0;
-    if (remainY > 0.001 /*&& abs(lastRemainY) >= abs(remainY)*/){
+    if (abs(remainY) > 0.001 /*&& abs(lastRemainY) >= abs(remainY)*/){
         yMoved += rVy * deltaTime;
         lastRemainY = remainY;
         remainY = goalDistanceY - yMoved;
-        if (yMoved <= distance_p_control_0)
+        if (abs(yMoved) <= distance_p_control_0)
             yVelocityNow = velocity_p_control_0;
-        else if (yMoved <= distance_p_control_1)
+        else if (abs(yMoved) <= distance_p_control_1)
             yVelocityNow = velocity_p_control_1;
-        else if (yMoved <= distance_p_control_2)
+        else if (abs(yMoved) <= distance_p_control_2)
             yVelocityNow = velocity_p_control_2;
-        else if (remainY <= distance_p_control_0)
+        else if (abs(remainY) <= distance_p_control_0)
             yVelocityNow = velocity_p_control_0;
-        else if (remainY <= distance_p_control_1)
+        else if (abs(remainY) <= distance_p_control_1)
             yVelocityNow = velocity_p_control_1;
-        else if (remainY <= distance_p_control_2)
+        else if (abs(remainY) <= distance_p_control_2)
             yVelocityNow = velocity_p_control_2;
         // It's too fast now, so I comment it
         // else if (remainY <= distance_p_control_3)
@@ -113,6 +113,14 @@ int moveTo(){
     }
     else
         VelY = 0;
+    if (abs(rW) > 0.00)
+    {
+    	AngVelW = -rW * 0.1;
+    }
+    else
+    {
+    	AngVelW = 0;
+    }
 
     if (VelX == 0 && VelY == 0){
     	botPositionX += xMoved;
@@ -122,7 +130,6 @@ int moveTo(){
     else
         is_arrived = 0;
 
-    AngVelW = 0.0;
 
     // Go through TF
     VelX = TF_World_to_Robot(VelX);
