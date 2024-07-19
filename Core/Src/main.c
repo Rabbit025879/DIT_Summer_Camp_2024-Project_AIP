@@ -31,6 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -104,7 +105,7 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
-
+  main_function();
   /* USER CODE END 2 */
 
   /* Infinite loop */
