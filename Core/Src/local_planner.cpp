@@ -22,6 +22,12 @@ float remainY = goalDistanceY;
 float lastRemainX = goalDistanceX;
 float lastRemainY = goalDistanceY;
 
+/* velocity param */
+float maxVelocity = 0.325;
+float vel_0 = 0.05;
+float vel_1 = maxVelocity - 0.05;
+float vel_2 = maxVelocity;
+
 void cmd_vel_pub(float Vx_, float Vy_, float W_)
 {
     Vx = (double)Vx_;
@@ -33,6 +39,10 @@ void pointToDist(const float xGoal, const float yGoal)
 {
     goalDistanceX = xGoal - botPositionX;
     goalDistanceY = yGoal - botPositionY;
+    maxVelocity = min(min(goalDistanceX, goalDistanceY) / 0.5 * 0.325, 0.325);
+    vel_0 = 0.05;
+    vel_1 = maxVelocity - 0.05;
+    vel_2 = maxVelocity;
     return;
 }
 
