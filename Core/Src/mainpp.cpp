@@ -29,7 +29,7 @@ void setup(){
 void main_function(){
 	setup();
 	main_function_status = 1;
-	HAL_Delay(1500);
+	HAL_Delay(2000);
 	main_function_status = 2;
 	do_path();
 	main_function_status = 3;

@@ -45,5 +45,7 @@ float vel_2 = maxVelocity;
 
 // cmd_vel
 extern double Vx, Vy, W;
+// real velocity
+extern double rVx, rVy, rW;
 
 #endif /* INC_LOCAL_PLANNER_H_ */
