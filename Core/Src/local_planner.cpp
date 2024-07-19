@@ -22,20 +22,33 @@ float remainY = goalDistanceY;
 float lastRemainX = goalDistanceX;
 float lastRemainY = goalDistanceY;
 
-void cmd_vel_pub(float Vx_, float Vy_, float W_){
-	Vx = (double)Vx_;
-	Vy = (double)Vy_;
-	W = (double)W_;
+/* velocity param */
+float maxVelocity = 0.325;
+float vel_0 = 0.05;
+float vel_1 = maxVelocity - 0.05;
+float vel_2 = maxVelocity;
+
+void cmd_vel_pub(float Vx_, float Vy_, float W_)
+{
+    Vx = (double)Vx_;
+    Vy = (double)Vy_;
+    W = (double)W_;
 }
 
-void pointToDist(const float xGoal, const float yGoal){
+void pointToDist(const float xGoal, const float yGoal)
+{
     goalDistanceX = xGoal - botPositionX;
     goalDistanceY = yGoal - botPositionY;
+    maxVelocity = min(min(goalDistanceX, goalDistanceY) / 0.5 * 0.325, 0.325);
+    vel_0 = 0.05;
+    vel_1 = maxVelocity - 0.05;
+    vel_2 = maxVelocity;
     return;
 }
 
-void initParam(){
-	cmd_vel_pub(0,0,0);
+void initParam()
+{
+    cmd_vel_pub(0, 0, 0);
     xMoved = 0, yMoved = 0;
     remainX = lastRemainX = goalDistanceX;
     remainY = lastRemainY = goalDistanceY;
@@ -43,10 +56,12 @@ void initParam(){
 
 // TODO: TF !!!
 // Transfer the world coordinate into robot coordinate
-float TF_World_to_Robot(float World){
-	float Robot = 0.0;
-	Robot = World;
-	return Robot;
+
+float TF_World_to_Robot(float World)
+{
+    float Robot = 0.0;
+    Robot = World;
+    return Robot;
 }
 
 // Return if it's arrived or not
@@ -57,23 +72,21 @@ int moveTo(){
         xMoved += rVx * deltaTime;
         lastRemainX = remainX;
         remainX = goalDistanceX - xMoved;
-        if (abs(xMoved) <= distance_p_control_0)
-            xVelocityNow = velocity_p_control_0;
-        else if (abs(xMoved) <= distance_p_control_1)
-            xVelocityNow = velocity_p_control_1;
-        else if (abs(xMoved) <= distance_p_control_2)
-            xVelocityNow = velocity_p_control_2;
-        else if (abs(remainX) <= distance_p_control_0)
-            xVelocityNow = velocity_p_control_0;
-        else if (abs(remainX) <= distance_p_control_1)
-            xVelocityNow = velocity_p_control_1;
-        else if (abs(remainX) <= distance_p_control_2)
-            xVelocityNow = velocity_p_control_2;
-        // It's too fast now, so I comment it
-        // else if (remainDistance <= distance_p_control_3)
-        //     xVelocityNow = velocity_p_control_3;
+        if (abs(xMoved) <= dist_0)
+            xVelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0;
+        else if (abs(xMoved) <= dist_1)
+            xVelocityNow = (abs(xMoved) - dist_0) * 1.5 + vel_0;
+        else if (abs(xMoved) <= dist_2)
+            xVelocityNow = pow(((-abs(xMoved) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
+
+        else if (abs(remainX) <= dist_0)
+            xVelocityNow = pow(abs(remainX) / dist_0, 1.5) * vel_0;
+        else if (abs(remainX) <= dist_1)
+            xVelocityNow = (abs(remainX) - dist_0) * 1.5 + vel_0;
+        else if (abs(remainX) <= dist_2)
+            xVelocityNow = pow(((-abs(remainX) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
         else
-            xVelocityNow = velocity_p_control_3;
+            xVelocityNow = vel_2;
 
         if (goalDistanceX < 0)
             VelX = -xVelocityNow;
@@ -83,27 +96,27 @@ int moveTo(){
     }
     else
         VelX = 0;
-    if (remainY > 0.001 /*&& abs(lastRemainY) >= abs(remainY)*/){
+
+    if (abs(remainY) > 0.001)
+    {
         yMoved += rVy * deltaTime;
         lastRemainY = remainY;
         remainY = goalDistanceY - yMoved;
-        if (yMoved <= distance_p_control_0)
-            yVelocityNow = velocity_p_control_0;
-        else if (yMoved <= distance_p_control_1)
-            yVelocityNow = velocity_p_control_1;
-        else if (yMoved <= distance_p_control_2)
-            yVelocityNow = velocity_p_control_2;
-        else if (remainY <= distance_p_control_0)
-            yVelocityNow = velocity_p_control_0;
-        else if (remainY <= distance_p_control_1)
-            yVelocityNow = velocity_p_control_1;
-        else if (remainY <= distance_p_control_2)
-            yVelocityNow = velocity_p_control_2;
-        // It's too fast now, so I comment it
-        // else if (remainY <= distance_p_control_3)
-        //     yVelocityNow = velocity_p_control_3;
+        if (abs(yMoved) <= dist_0)
+            yVelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0;
+        else if (abs(yMoved) <= dist_1)
+            yVelocityNow = (abs(xMoved) - dist_0) * 1.5 + vel_0;
+        else if (abs(yMoved) <= dist_2)
+            yVelocityNow = pow(((-abs(yMoved) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
+
+        else if (abs(remainY) <= dist_0)
+            yVelocityNow = pow(abs(remainY) / dist_0, 1.5) * vel_0;
+        else if (abs(remainY) <= dist_1)
+            yVelocityNow = (abs(remainY) - dist_0) * 1.5 + vel_0;
+        else if (abs(remainY) <= dist_2)
+            yVelocityNow = pow(((-abs(remainY) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
         else
-            yVelocityNow = velocity_p_control_3;
+            yVelocityNow = vel_2;
 
         if (goalDistanceY < 0)
             VelY = -yVelocityNow;
