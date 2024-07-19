@@ -16,7 +16,7 @@ float goalDistanceY;
 
 /* function param*/
 float xVelocityNow, yVelocityNow, zVelocityNow;
-float xMoved = 0, yMoved = 0;
+float xMoved = 0.0, yMoved = 0.0;
 float remainX = goalDistanceX;
 float remainY = goalDistanceY;
 float lastRemainX = goalDistanceX;
@@ -49,7 +49,7 @@ void pointToDist(const float xGoal, const float yGoal)
 void initParam()
 {
     cmd_vel_pub(0, 0, 0);
-    xMoved = 0, yMoved = 0;
+    xMoved = 0.0, yMoved = 0.0;
     remainX = lastRemainX = goalDistanceX;
     remainY = lastRemainY = goalDistanceY;
 }
@@ -73,7 +73,8 @@ int moveTo(){
         lastRemainX = remainX;
         remainX = goalDistanceX - xMoved;
         if (abs(xMoved) <= dist_0)
-            xVelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0;
+            xVelocityNow = 0.05;
+//            		pow(abs(xMoved) / dist_0, 1.5) * vel_0 + 0.03;
         else if (abs(xMoved) <= dist_1)
             xVelocityNow = (abs(xMoved) - dist_0) * 1.5 + vel_0;
         else if (abs(xMoved) <= dist_2)
@@ -97,35 +98,37 @@ int moveTo(){
     else
         VelX = 0;
 
-    if (abs(remainY) > 0.001)
-    {
-        yMoved += rVy * deltaTime;
-        lastRemainY = remainY;
-        remainY = goalDistanceY - yMoved;
-        if (abs(yMoved) <= dist_0)
-            yVelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0;
-        else if (abs(yMoved) <= dist_1)
-            yVelocityNow = (abs(xMoved) - dist_0) * 1.5 + vel_0;
-        else if (abs(yMoved) <= dist_2)
-            yVelocityNow = pow(((-abs(yMoved) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
+//    if (abs(remainY) > 0.001)
+//    {
+//        yMoved += rVy * deltaTime;
+//        lastRemainY = remainY;
+//        remainY = goalDistanceY - yMoved;
+//        if (abs(yMoved) <= dist_0)
+//            yVelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0 + 0.03;
+//        else if (abs(yMoved) <= dist_1)
+//            yVelocityNow = (abs(xMoved) - dist_0) * 1.5 + vel_0;
+//        else if (abs(yMoved) <= dist_2)
+//            yVelocityNow = pow(((-abs(yMoved) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
+//
+//        else if (abs(remainY) <= dist_0)
+//            yVelocityNow = pow(abs(remainY) / dist_0, 1.5) * vel_0;
+//        else if (abs(remainY) <= dist_1)
+//            yVelocityNow = (abs(remainY) - dist_0) * 1.5 + vel_0;
+//        else if (abs(remainY) <= dist_2)
+//            yVelocityNow = pow(((-abs(remainY) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
+//        else
+//            yVelocityNow = vel_2;
+//
+//        if (goalDistanceY < 0)
+//            VelY = -yVelocityNow;
+//        else
+//            VelY = yVelocityNow;
+//        is_arrived = 0;
+//    }
+//    else
+//        VelY = 0;
 
-        else if (abs(remainY) <= dist_0)
-            yVelocityNow = pow(abs(remainY) / dist_0, 1.5) * vel_0;
-        else if (abs(remainY) <= dist_1)
-            yVelocityNow = (abs(remainY) - dist_0) * 1.5 + vel_0;
-        else if (abs(remainY) <= dist_2)
-            yVelocityNow = pow(((-abs(remainY) + dist_2) / dist_0), 1.5) * -vel_0 + vel_2;
-        else
-            yVelocityNow = vel_2;
-
-        if (goalDistanceY < 0)
-            VelY = -yVelocityNow;
-        else
-            VelY = yVelocityNow;
-        is_arrived = 0;
-    }
-    else
-        VelY = 0;
+    VelY = VelX * goalDistanceY / goalDistanceX;
     if (abs(rW) > 0.00)
     {
     	AngVelW = -rW * 0.1;
