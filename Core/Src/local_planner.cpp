@@ -65,12 +65,10 @@ float TF_World_to_Robot(float World)
 }
 
 // Return if it's arrived or not
-int moveTo()
-{
-    float VelX, VelY, AngVelW;
-    int is_arrived = 0;
-    if (abs(remainX) > 0.001)
-    {
+int moveTo(){
+	float VelX, VelY, AngVelW;
+	int is_arrived = 0;
+    if (abs(remainX) > 0.001/* && abs(lastRemainX) >= abs(remainX)*/){
         xMoved += rVx * deltaTime;
         lastRemainX = remainX;
         remainX = goalDistanceX - xMoved;
@@ -129,8 +127,11 @@ int moveTo()
     else
         VelY = 0;
 
-    if (VelX == 0 && VelY == 0)
+    if (VelX == 0 && VelY == 0){
+    	botPositionX += xMoved;
+    	botPositionY += yMoved;
         is_arrived = 1;
+    }
     else
         is_arrived = 0;
 
