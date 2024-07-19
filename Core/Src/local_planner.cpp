@@ -9,9 +9,6 @@
 
 float deltaTime = 0.001;
 /* global param */
-float realVelX = 0;
-float realVelY = 0;
-float realVelW = 0;
 float botPositionX = 0;
 float botPositionY = 0;
 float goalDistanceX;
@@ -25,6 +22,12 @@ float remainY = goalDistanceY;
 float lastRemainX = goalDistanceX;
 float lastRemainY = goalDistanceY;
 
+void cmd_vel_pub(float Vx_, float Vy_, float W_){
+	Vx = (double)Vx_;
+	Vy = (double)Vy_;
+	W = (double)W_;
+}
+
 void pointToDist(const float xGoal, const float yGoal){
     goalDistanceX = xGoal - botPositionX;
     goalDistanceY = yGoal - botPositionY;
@@ -32,6 +35,7 @@ void pointToDist(const float xGoal, const float yGoal){
 }
 
 void initParam(){
+	cmd_vel_pub(0,0,0);
     xMoved = 0, yMoved = 0;
     remainX = lastRemainX = goalDistanceX;
     remainY = lastRemainY = goalDistanceY;
@@ -41,14 +45,8 @@ void initParam(){
 // Transfer the world coordinate into robot coordinate
 float TF_World_to_Robot(float World){
 	float Robot = 0.0;
-
+	Robot = World;
 	return Robot;
-}
-
-void cmd_vel_pub(float Vx_, float Vy_, float W_){
-	Vx = (double)Vx_;
-	Vy = (double)Vy_;
-	W = (double)W_;
 }
 
 // Return if it's arrived or not
@@ -56,7 +54,7 @@ int moveTo(){
 	float VelX, VelY, AngVelW;
 	int is_arrived = 0;
     if (abs(remainX) > 0.001 && abs(lastRemainX) >= abs(remainX)){
-        xMoved += realVelX * deltaTime;
+        xMoved += rVx * deltaTime;
         lastRemainX = remainX;
         remainX = goalDistanceX - xMoved;
         if (abs(xMoved) <= distance_p_control_0)
@@ -86,7 +84,7 @@ int moveTo(){
     else
         VelX = 0;
     if (remainY > 0.001 && abs(lastRemainY) >= abs(remainY)){
-        yMoved += realVelY * deltaTime;
+        yMoved += rVy * deltaTime;
         lastRemainY = remainY;
         remainY = goalDistanceX - yMoved;
         if (yMoved <= distance_p_control_0)
