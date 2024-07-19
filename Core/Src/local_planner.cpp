@@ -22,30 +22,23 @@ float remainY = goalDistanceY;
 float lastRemainX = goalDistanceX;
 float lastRemainY = goalDistanceY;
 
-<<<<<<< HEAD
-void pointToDist(const float xGoal, const float yGoal)
+void cmd_vel_pub(float Vx_, float Vy_, float W_)
 {
-=======
-void cmd_vel_pub(float Vx_, float Vy_, float W_){
-	Vx = (double)Vx_;
-	Vy = (double)Vy_;
-	W = (double)W_;
+    Vx = (double)Vx_;
+    Vy = (double)Vy_;
+    W = (double)W_;
 }
 
-void pointToDist(const float xGoal, const float yGoal){
->>>>>>> 75c2e9a15445c33f4efdfa29fd6c2edb36f9785e
+void pointToDist(const float xGoal, const float yGoal)
+{
     goalDistanceX = xGoal - botPositionX;
     goalDistanceY = yGoal - botPositionY;
     return;
 }
 
-<<<<<<< HEAD
 void initParam()
 {
-=======
-void initParam(){
-	cmd_vel_pub(0,0,0);
->>>>>>> 75c2e9a15445c33f4efdfa29fd6c2edb36f9785e
+    cmd_vel_pub(0, 0, 0);
     xMoved = 0, yMoved = 0;
     remainX = lastRemainX = goalDistanceX;
     remainY = lastRemainY = goalDistanceY;
@@ -53,19 +46,12 @@ void initParam(){
 
 // TODO: TF !!!
 // Transfer the world coordinate into robot coordinate
-<<<<<<< HEAD
+
 float TF_World_to_Robot(float World)
 {
     float Robot = 0.0;
-
+    Robot = World;
     return Robot;
-}
-
-void cmd_vel_pub(float Vx_, float Vy_, float W_)
-{
-    Vx = (double)Vx_;
-    Vy = (double)Vy_;
-    W = (double)W_;
 }
 
 // Return if it's arrived or not
@@ -75,21 +61,7 @@ int moveTo()
     int is_arrived = 0;
     if (abs(remainX) > 0.001 && abs(lastRemainX) >= abs(remainX))
     {
-        xMoved += realVelX * deltaTime;
-=======
-float TF_World_to_Robot(float World){
-	float Robot = 0.0;
-	Robot = World;
-	return Robot;
-}
-
-// Return if it's arrived or not
-int moveTo(){
-	float VelX, VelY, AngVelW;
-	int is_arrived = 0;
-    if (abs(remainX) > 0.001 && abs(lastRemainX) >= abs(remainX)){
         xMoved += rVx * deltaTime;
->>>>>>> 75c2e9a15445c33f4efdfa29fd6c2edb36f9785e
         lastRemainX = remainX;
         remainX = goalDistanceX - xMoved;
         if (abs(xMoved) <= dist_0)
@@ -116,14 +88,10 @@ int moveTo(){
     }
     else
         VelX = 0;
-<<<<<<< HEAD
+
     if (remainY > 0.001 && abs(lastRemainY) >= abs(remainY))
     {
-        yMoved += realVelY * deltaTime;
-=======
-    if (remainY > 0.001 && abs(lastRemainY) >= abs(remainY)){
         yMoved += rVy * deltaTime;
->>>>>>> 75c2e9a15445c33f4efdfa29fd6c2edb36f9785e
         lastRemainY = remainY;
         remainY = goalDistanceX - yMoved;
         if (yMoved <= dist_0)
