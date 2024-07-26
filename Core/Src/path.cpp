@@ -19,22 +19,22 @@ void path_init(){
 // ** Script
 // ------------------------------------------
 	//	// x: 2.8 y:1.85
-//		buffer = {0.8, 0.55, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.8, 1.15, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.3, 0.35, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {0.8, 1.15, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.8, 0.55, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.3, 1.35, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-		buffer = {0.2, 0.0, 0.0};	// ** Modify path points
+		buffer = {0.8, 0.55, 0.0};	// ** Modify path points
 		path.push_back(buffer);
+		buffer = {1.8, 1.15, 0.0};	// ** Modify path points
+		path.push_back(buffer);
+		buffer = {1.3, 0.35, 0.0};	// ** Modify path points
+		path.push_back(buffer);
+		buffer = {0.8, 1.15, 0.0};	// ** Modify path points
+		path.push_back(buffer);
+		buffer = {1.8, 0.55, 0.0};	// ** Modify path points
+		path.push_back(buffer);
+		buffer = {1.3, 1.35, 0.0};	// ** Modify path points
+		path.push_back(buffer);
+		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+		path.push_back(buffer);
+//		buffer = {0.2, 0.0, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
 //		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
 //		path.push_back(buffer);
 //		buffer = {0.0, 0.4, 0.0};	// ** Modify path points
