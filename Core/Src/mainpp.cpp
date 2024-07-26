@@ -8,6 +8,8 @@
 #include "mainpp.h"
 
 int main_function_status = 0;
+bool ready_signal = 0;
+bool once = 0;
 
 // STM Setup
 void setup(){
@@ -28,9 +30,21 @@ void setup(){
 
 void main_function(){
 	setup();
-	main_function_status = 1;
-	HAL_Delay(2000);
-	main_function_status = 2;
-	do_path();
-	main_function_status = 3;
+	while(1){
+		ready_signal = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+		if(!ready_signal && !once){
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+			once = 1;
+			main_function_status = 1;
+		}
+		if(ready_signal && once){
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+			HAL_Delay(1000);
+			main_function_status = 2;
+			do_path();
+			main_function_status = 3;
+			HAL_Delay(1000);
+			NVIC_SystemReset();
+		}
+	}
 }

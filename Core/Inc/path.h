@@ -18,6 +18,7 @@
 
 extern int done;
 
+void path_init();
 void do_path();
 
 #endif /* INC_PATH_H_ */
