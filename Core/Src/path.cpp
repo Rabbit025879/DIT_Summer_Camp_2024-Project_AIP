@@ -16,25 +16,40 @@ void path_init(){
 	point buffer;
 	done = 0;
 	
-	// ** Script
-	// ------------------------------------------
-		buffer = {0.3, 0.3, 0.0};	// ** Modify path points
+// ** Script
+// ------------------------------------------
+	//	// x: 2.8 y:1.85
+//		buffer = {0.8, 0.55, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {1.8, 1.15, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {1.3, 0.35, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {0.8, 1.15, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {1.8, 0.55, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {1.3, 1.35, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+		buffer = {0.2, 0.0, 0.0};	// ** Modify path points
 		path.push_back(buffer);
-		buffer = {0.3, 0.6, 0.0};	// ** Modify path points
-		path.push_back(buffer);
-		buffer = {0.6, 0.6, 0.0};	// ** Modify path points
-		path.push_back(buffer);
-	//	buffer = {4.0, 3.0, 0.0};	// ** Modify path points
-	//	path.push_back(buffer);
-	//	buffer = {10.0, 3.0, 0.0};	// ** Modify path points
-	//	path.push_back(buffer);
+//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {0.0, 0.4, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//		path.push_back(buffer);
+//	path.push_back(buffer);
 
-	// ------------------------------------------
+// ------------------------------------------
 }
 
 // Do path once
 void do_path(){
 	path_init();
+
 	if(global_planner_on)	return;	// TODO: Global planner processing
 	if(look_ahead_dis_on)	return;	// TODO: Check for finish
 	else{
