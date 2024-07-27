@@ -27,6 +27,8 @@
 #define motor_span 0.001
 #define kp 2.2
 #define ki 20.5
+//#define kp 1
+//#define ki 1
 
 // Motor PWM output
 #define motorARR 999 //ARR of TIM4

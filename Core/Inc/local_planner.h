@@ -12,15 +12,18 @@
 #define INC_LOCAL_PLANNER_H_
 
 #include "TIM_IT.h"
+#include "path_vector_def.h"
+#include "wheel.h"
 #include <math.h>
 using namespace std;
 
-void pointToDist(const float xGoal, const float yGoal);
+void pointToDist(const float xGoal, const float yGoal, const float wGoal);
 void initParam();
 int moveTo();
 int moveCurve(double radius, double angleRad);
 int stop();
-float TF_World_to_Robot(float World);
+point TF_World_to_Robot(float World_x, float World_y, double Robot_theta);
+point TF_Robot_to_World(float Robot_x, float Robot_y, double Robot_theta);
 void cmd_vel_pub(float Vx_, float Vy_, float W_);
 
 /* p control param */
@@ -32,6 +35,8 @@ const float omega_p_control_0 = 0.087266462599716;
 const float omega_p_control_1 = 0.174532925199433;
 const float omega_p_control_2 = 0.349065850398866;
 const float omega_p_control_3 = 0.523598775598299;
+const float maxAngularVelocity = 0.08;
+const float minAngularVelocity = 0.05;
 //const float maxVelocity = 0.4;
 //const float vel_0 = 0.05;
 //const float vel_1 = maxVelocity - 0.05;

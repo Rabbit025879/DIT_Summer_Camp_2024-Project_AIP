@@ -12,13 +12,14 @@ float deltaTime = 0.001;
 float botPositionX = 0;
 float botPositionY = 0;
 float goalDistance;
-float goalDistanceY;
 
 /* function param*/
 float VelocityNow;
-float xMoved = 0.0, yMoved = 0.0, Moved = 0.0;
+float xMoved = 0.0, yMoved = 0.0, wMoved = 0.0, Moved = 0.0;
 float remain = goalDistance;
 float x_vec, y_vec;
+float Goal_w;
+float remain_w;
 
 float maxVelocity = 0.4;
 float vel_0 = 0.05;
@@ -35,11 +36,12 @@ void cmd_vel_pub(float Vx_, float Vy_, float W_)
     W = (double)W_;
 }
 
-void pointToDist(const float xGoal, const float yGoal)
+void pointToDist(const float xGoal, const float yGoal, const float wGoal)
 {
     goalDistance = hypot((xGoal - botPositionX),(yGoal - botPositionY));
     x_vec = (xGoal-botPositionX)/goalDistance;
     y_vec = (yGoal-botPositionY)/goalDistance;
+    Goal_w = wGoal;
 //    goalDistanceY = yGoal - botPositionY;
     maxVelocity = min(goalDistance / 0.5 * 0.325, 0.325);
     vel_0 = 0.05;
@@ -56,27 +58,37 @@ void initParam()
     cmd_vel_pub(0, 0, 0);
     xMoved = 0.0, yMoved = 0.0;
     remain = goalDistance;
+    remain_w = Goal_w - wMoved;
 }
 
-// TODO: TF !!!
 // Transfer the world coordinate into robot coordinate
-
-float TF_World_to_Robot(float World)
-{
-    float Robot = 0.0;
-    Robot = World;
+point TF_World_to_Robot(float World_x, float World_y, double Robot_theta){
+    point Robot;
+    Robot.x = World_x*cos(Robot_theta) + World_y*sin(Robot_theta);
+    Robot.y = -World_x*sin(Robot_theta) + World_y*cos(Robot_theta);
     return Robot;
+}
+
+// Transfer the robot coordinate into world coordinate
+point TF_Robot_to_World(float Robot_x, float Robot_y, double Robot_theta){
+    point World;
+    World.x = Robot_x*cos(Robot_theta) - Robot_y*sin(Robot_theta);
+    World.y = Robot_x*sin(Robot_theta) + Robot_y*cos(Robot_theta);
+    return World;
 }
 
 // Return if it's arrived or not
 int moveTo(){
 	float VelX, VelY, AngVelW;
 	int is_arrived = 0;
+	point world_rVel;
     if (abs(remain) > 0.005/* && abs(lastRemainX) >= abs(remainX)*/){
-        xMoved += rVx * deltaTime;
-        yMoved += rVy * deltaTime;
+        world_rVel = TF_Robot_to_World(rVx, rVy, wMoved);
+    	xMoved += world_rVel.x * deltaTime;
+        yMoved += world_rVel.y * deltaTime;
         Moved = hypot(xMoved, yMoved);
         remain = goalDistance - Moved;
+
 //        if (abs(Moved) <= 0.005)
 //        	VelocityNow = 0.05;
         if (abs(Moved) <= dist_0)
@@ -105,22 +117,19 @@ int moveTo(){
             VelY = VelocityNow*y_vec;
         }
         is_arrived = 0;
-    }
-    else{
+    } else {
         VelX = 0;
         VelY = 0;
     }
+    if(abs(remain_w) > 0.05){
+		wMoved += rW * deltaTime;
+		remain_w = Goal_w - wMoved;
+		AngVelW = remain_w * 0.1745329252;
+		min(AngVelW, maxAngularVelocity);
+		max(AngVelW, minAngularVelocity);
+    } else AngVelW = 0;
 
-    if (abs(rW) > 0.00)
-    {
-    	AngVelW = -rW * 0.06;
-    }
-    else
-    {
-    	AngVelW = 0;
-    }
-
-    if (VelX == 0 && VelY == 0){
+    if (VelX == 0 && VelY == 0 && AngVelW == 0){
     	botPositionX += xMoved;
     	botPositionY += yMoved;
         is_arrived = 1;
@@ -128,11 +137,11 @@ int moveTo(){
     else
         is_arrived = 0;
 
-
     // Go through TF
-    VelX = TF_World_to_Robot(VelX);
-    VelY = TF_World_to_Robot(VelY);
-    AngVelW = TF_World_to_Robot(AngVelW);
+    point TF_vel;
+	TF_vel = TF_World_to_Robot(VelX, VelY, wMoved);
+    VelX = TF_vel.x;
+    VelY = TF_vel.y;
 
     // Publish the cmd_vel
     cmd_vel_pub(VelX, VelY, AngVelW);

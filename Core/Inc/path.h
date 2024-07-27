@@ -16,6 +16,9 @@
 #include "TIM_IT.h"
 #include "local_planner.h"
 
+// 定義 PI
+constexpr float PI = 3.14159265358979323846f;
+
 extern int done;
 
 void path_init();
