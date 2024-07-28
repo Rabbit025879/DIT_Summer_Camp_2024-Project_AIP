@@ -8,7 +8,6 @@
 // ** Path script
 // ** The Path can be modify here to form a script
 
-
 #ifndef INC_PATH_H_
 #define INC_PATH_H_
 
@@ -17,7 +16,7 @@
 #include "local_planner.h"
 
 // 定義 PI
-constexpr float PI = 3.14159265358979323846f;
+constexpr double PI = 3.141592653589793238462643383279502884f;
 
 extern int done;
 
