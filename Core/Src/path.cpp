@@ -11,38 +11,76 @@ bool global_planner_on = false;
 bool look_ahead_dis_on = false;
 std::vector<point> path;
 
-// Do path once
-void do_path(){
+// Initialize the path
+void path_init(){
 	point buffer;
+	done = 0;
 	
 // ** Script
 // ------------------------------------------
-	//	// x: 2.8 y:1.85
-//		buffer = {0.8, 0.55, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.8, 1.15, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.3, 0.35, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {0.8, 1.15, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.8, 0.55, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {1.3, 1.35, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-		buffer = {0.2, 0.0, 0.0};	// ** Modify path points
-		path.push_back(buffer);
-//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {0.0, 0.4, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
-//		buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-//		path.push_back(buffer);
+//	----- Spin
+//	buffer = {0.0, 0.0, 0.785};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 1.57};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 3.14};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, -3.14};	// ** Modify path points
+//	path.push_back(buffer);
+//	------ Move and Spin
+		// x: 0.2 y:0.2
+//	buffer = {0.8, 0.5, 0.785};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {1.3, 0.3, 1.57};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.8, 0.5, 3.14};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	------ Move then Spin
+	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.2, 0.2, PI/2};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.1, 0.1, PI/2};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.1, 0.1, PI};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.0, 0.2, PI};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.0, 0.2, PI/2};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.0, 0.0, PI/2};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+//	------
+//	buffer = {0.8, 1.15, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {1.8, 0.55, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {1.3, 1.35, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.2, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.4, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
 //	path.push_back(buffer);
 
 // ------------------------------------------
+}
+
+// Do path once
+void do_path(){
+	path_init();
 
 	if(global_planner_on)	return;	// TODO: Global planner processing
 	if(look_ahead_dis_on)	return;	// TODO: Check for finish

@@ -10,7 +10,6 @@
 #ifndef INC_MAINPP_H_
 #define INC_MAINPP_H_
 
-#include "main.h"
 #include "path.h"
 
 #ifdef __cplusplus
