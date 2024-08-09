@@ -40,17 +40,17 @@ void path_init(){
 //	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
 //	------ Move then Spin
-	buffer = {0.8, 0.5, 0.0};	// ** Modify path points
+	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {0.8, 0.5, PI/2};	// ** Modify path points
+	buffer = {0.2, 0.2, PI/2};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {1.3, 0.3, PI/2};	// ** Modify path points
+	buffer = {0.1, 0.1, PI/2};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {1.3, 0.3, PI};	// ** Modify path points
+	buffer = {0.1, 0.1, PI};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {0.8, 0.5, PI};	// ** Modify path points
+	buffer = {0.0, 0.2, PI};	// ** Modify path points
 	path.push_back(buffer);
-	buffer = {0.8, 0.5, PI/2};	// ** Modify path points
+	buffer = {0.0, 0.2, PI/2};	// ** Modify path points
 	path.push_back(buffer);
 	buffer = {0.0, 0.0, PI/2};	// ** Modify path points
 	path.push_back(buffer);
