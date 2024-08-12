@@ -91,8 +91,10 @@ int moveTo(){
 
 //        if (abs(Moved) <= 0.005)
 //        	VelocityNow = 0.05;
-        if (abs(Moved) <= dist_0)
-        	VelocityNow = vel_0;
+        if (abs(Moved) <= dist_0){
+        	VelocityNow += 0.001;
+			VelocityNow = min(VelocityNow, vel_0);
+        }
 //            VelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0 ;
         else if (abs(Moved) <= dist_1)
             VelocityNow = (abs(Moved) - dist_0) * 1.5 + vel_0 ;

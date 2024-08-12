@@ -10,14 +10,28 @@
 bool global_planner_on = false;
 bool look_ahead_dis_on = false;
 std::vector<point> path;
+point origin_pose;
 
 // Initialize the path
 void path_init(){
 	point buffer;
 	done = 0;
-	
+	origin_pose = {0.2, 0.2, 0.0};
 // ** Script
 // ------------------------------------------
+//	----- Straight Test
+	buffer = {0.4, 0.2, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.2, 0.4, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.4, 0.4, 0.0};	// ** Modify path points
+	path.push_back(buffer);
+	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
+	path.push_back(buffer);
 //	----- Spin
 //	buffer = {0.0, 0.0, 0.785};	// ** Modify path points
 //	path.push_back(buffer);
@@ -40,41 +54,34 @@ void path_init(){
 //	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
 //	------ Move then Spin
-	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.2, 0.2, PI/2};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.1, 0.1, PI/2};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.1, 0.1, PI};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.0, 0.2, PI};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.0, 0.2, PI/2};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.0, 0.0, PI/2};	// ** Modify path points
-	path.push_back(buffer);
-	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-	path.push_back(buffer);
+//	buffer = {0.2, 0.2, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.2, 0.2, PI/2};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.1, 0.1, PI/2};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.1, 0.1, PI};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.2, PI};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.2, PI/2};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, PI/2};	// ** Modify path points
+//	path.push_back(buffer);
+//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	path.push_back(buffer);
 //	------
-//	buffer = {0.8, 1.15, 0.0};	// ** Modify path points
+//	Map 1 Test path
+//	buffer = {1.9, 1.9, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
-//	buffer = {1.8, 0.55, 0.0};	// ** Modify path points
+//	buffer = {1.9, 0.2, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
-//	buffer = {1.3, 1.35, 0.0};	// ** Modify path points
+//	buffer = {0.7, 0.2, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
-//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
+//	buffer = {0.2, 0.9, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
-//	buffer = {0.2, 0.0, 0.0};	// ** Modify path points
+//	buffer = {0.2, 1.9, 0.0};	// ** Modify path points
 //	path.push_back(buffer);
-//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-//	path.push_back(buffer);
-//	buffer = {0.0, 0.4, 0.0};	// ** Modify path points
-//	path.push_back(buffer);
-//	buffer = {0.0, 0.0, 0.0};	// ** Modify path points
-//	path.push_back(buffer);
-//	path.push_back(buffer);
-
 // ------------------------------------------
 }
 
