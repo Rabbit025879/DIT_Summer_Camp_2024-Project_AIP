@@ -18,7 +18,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		if(reset)	NVIC_SystemReset();
 		// Determine goal
 		if(arrived && which_point < path.size()){
-			pointToDist(path[which_point].x, path[which_point].y, path[which_point].w);
+			pointToDist(path[which_point].x - origin_pose.x, path[which_point].y - origin_pose.y, path[which_point].w - origin_pose.w);
 			initParam();
 			which_point++;
 			arrived = 0;

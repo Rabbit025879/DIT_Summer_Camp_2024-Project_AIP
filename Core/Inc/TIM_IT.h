@@ -18,4 +18,6 @@
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
+extern point origin_pose;
+
 #endif /* INC_TIM_IT_H_ */
