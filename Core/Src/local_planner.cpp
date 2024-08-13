@@ -7,6 +7,8 @@
 
 #include "local_planner.h"
 
+
+float kp_vel = 0.9;
 float deltaTime = 0.001;
 /* global param */
 float botPositionX = 0;
@@ -21,7 +23,9 @@ float x_vec, y_vec;
 float Goal_w;
 float remain_w;
 
-float maxVelocity = 0.4;
+//float maxVelocity = 0.4;
+float maxVelocity = 1.5;
+float a_bar = 0.0;
 float vel_0 = 0.05;
 float vel_1 = maxVelocity - 0.05;
 float vel_2 = maxVelocity;
@@ -82,7 +86,7 @@ int moveTo(){
 	float VelX, VelY, AngVelW;
 	int is_arrived = 0;
 	point world_rVel;
-    if (abs(remain) > 0.005/* && abs(lastRemainX) >= abs(remainX)*/){
+    if (abs(remain) > 0.05/* && abs(lastRemainX) >= abs(remainX)*/){
         world_rVel = TF_Robot_to_World(rVx, rVy, wMoved);
     	xMoved += world_rVel.x * deltaTime;
         yMoved += world_rVel.y * deltaTime;
@@ -91,24 +95,32 @@ int moveTo(){
 
 //        if (abs(Moved) <= 0.005)
 //        	VelocityNow = 0.05;
-        if (abs(Moved) <= dist_0){
-        	VelocityNow += 0.001;
-			VelocityNow = min(VelocityNow, vel_0);
-        }
-//            VelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0 ;
-        else if (abs(Moved) <= dist_1)
-            VelocityNow = (abs(Moved) - dist_0) * 1.5 + vel_0 ;
-        else if (abs(Moved) <= dist_2)
-            VelocityNow = pow(((-abs(Moved) + maxVelocity/1.5 + 0.1/3) / dist_0), 1.5) * -vel_0 + maxVelocity;
+//        if (abs(Moved) <= dist_0){
+//			VelocityNow = min(VelocityNow, vel_0);
+//        }
+////            VelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0 ;
+//        else if (abs(Moved) <= dist_1)
+//            VelocityNow = (abs(Moved) - dist_0) * 1.5 + vel_0 ;
+//        else if (abs(Moved) <= dist_2)
+//            VelocityNow = pow(((-abs(Moved) + maxVelocity/1.5 + 0.1/3) / dist_0), 1.5) * -vel_0 + maxVelocity;
+//
+//        else if (abs(remain) <= dist_0)
+//            VelocityNow = pow(abs(remain) / dist_0, 1.5) * vel_0 ;
+//        else if (abs(remain) <= dist_1)
+//            VelocityNow = (abs(remain) - dist_0) * 1.5 + vel_0 ;
+//        else if (abs(remain) <= dist_2)
+//            VelocityNow = pow(((-abs(remain) + maxVelocity/1.5 + 0.1/3) / dist_0), 1.5) * -vel_0 + maxVelocity;
+//        else
+//            VelocityNow = vel_2 ;
 
-        else if (abs(remain) <= dist_0)
-            VelocityNow = pow(abs(remain) / dist_0, 1.5) * vel_0 ;
-        else if (abs(remain) <= dist_1)
-            VelocityNow = (abs(remain) - dist_0) * 1.5 + vel_0 ;
-        else if (abs(remain) <= dist_2)
-            VelocityNow = pow(((-abs(remain) + maxVelocity/1.5 + 0.1/3) / dist_0), 1.5) * -vel_0 + maxVelocity;
-        else
-            VelocityNow = vel_2 ;
+        if(abs(remain) < 0.06)	kp_vel = 22;
+        else if(abs(remain) < 0.07)	kp_vel = 20;
+        else if(abs(remain) < 0.12)	kp_vel = 3;
+        else kp_vel = 4;
+        a_bar += 1.2*deltaTime;
+        VelocityNow = kp_vel * remain;
+        VelocityNow = min(VelocityNow, a_bar);
+        VelocityNow = min(VelocityNow, maxVelocity);
 
         if (goalDistance < 0){
             VelX = -VelocityNow*x_vec;
