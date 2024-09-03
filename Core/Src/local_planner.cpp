@@ -24,7 +24,7 @@ float Goal_w;
 float remain_w;
 
 //float maxVelocity = 0.4;
-float maxVelocity = 1.5;
+float maxVelocity = 1.0;
 float a_bar = 0.0;
 float vel_0 = 0.05;
 float vel_1 = maxVelocity - 0.05;
@@ -117,7 +117,7 @@ int moveTo(){
         else if(abs(remain) < 0.07)	kp_vel = 20;
         else if(abs(remain) < 0.12)	kp_vel = 3;
         else kp_vel = 4;
-        a_bar += 1.2*deltaTime;
+        a_bar += 0.9*deltaTime;
         VelocityNow = kp_vel * remain;
         VelocityNow = min(VelocityNow, a_bar);
         VelocityNow = min(VelocityNow, maxVelocity);
