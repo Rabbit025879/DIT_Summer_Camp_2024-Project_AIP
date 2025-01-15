@@ -8,25 +8,41 @@
 #include "local_planner.h"
 
 float deltaTime = 0.001;
-/* global param */
+/* bot param */
 float botPositionX = 0;
 float botPositionY = 0;
 float goalDistance;
-float goalDistanceY;
 
-/* function param*/
+/* velocity param*/
 float VelocityNow;
-float xMoved = 0.0, yMoved = 0.0, Moved = 0.0;
+float xMoved = 0.0, yMoved = 0.0, wMoved = 0.0, Moved = 0.0;
 float remain = goalDistance;
 float x_vec, y_vec;
+float Goal_w;
+float remain_w;
 
 float maxVelocity = 0.4;
-float vel_0 = 0.05;
-float vel_1 = maxVelocity - 0.05;
-float vel_2 = maxVelocity;
-float dist_0 = 0.05;
-float dist_1 = maxVelocity/1.5 + 0.1/3 - 0.05;
-float dist_2 = maxVelocity/1.5 + 0.1/3;
+double maxYawVel;
+const double maxAngularVelocity = 0.1;
+const double minAngularVelocity = 0.05;
+float vel_0;
+float vel_1;
+float vel_2;
+float dist_0;
+float dist_1;
+float dist_2;
+
+float tempt_constant;
+float yaw_0;
+float yaw_1;
+float yaw_2;
+float angle_0;
+float angle_1;
+float angle_2;
+
+bool hasObs = false;
+float d1, d2, radius;
+std::vector<pair<int, bool>> obsOnRoad;
 
 void cmd_vel_pub(float Vx_, float Vy_, float W_)
 {
@@ -34,20 +50,103 @@ void cmd_vel_pub(float Vx_, float Vy_, float W_)
     Vy = (double)Vy_;
     W = (double)W_;
 }
+void updateUnitVector(double moved)
+{
+    if (moved < d1)
+    {
+        x_vec = x_vec;
+        y_vec = y_vec;
+    }
+    else if (moved >= d1 && goalDistance - moved > d2)
+    {
+        double angVel = VelocityNow / radius;
+        double temp;
+        // rotation matrix to update unit vector velocity
+        if (obsOnRoad[0].second)
+        {
+            temp = cos(angVel * deltaTime) * x_vec + sin(angVel * deltaTime) * y_vec;
+            y_vec = -sin(angVel * deltaTime) * x_vec + cos(angVel * deltaTime) * y_vec;
+        }
+        else
+        {
+            temp = cos(angVel * deltaTime) * x_vec - sin(angVel * deltaTime) * y_vec;
+            y_vec = sin(angVel * deltaTime) * x_vec + cos(angVel * deltaTime) * y_vec;
+        }
+        x_vec = temp;
+    }
+    else
+    {
+        x_vec = x_vec;
+        y_vec = y_vec;
+    }
+}
+void planNewPath(std::vector<pair<int, bool>> obsOnRoad, const float xGoal, const float yGoal)
+{
+    double theta, x, y, D1, D2;
+    pair p1(x, y), p2(x, y);
+    radius = R + obsticals[obsOnRoad[0].first].w;
+    D1 = hypot((obsticals[obsOnRoad[0].first].x - botPositionX), (obsticals[obsOnRoad[0].first].y - botPositionY)); // distance between start point and obstical
+    d1 = sqrt(pow(D1, 2) - pow(radius, 2));                                                                         // first straight line path
+    D2 = hypot((obsticals[obsOnRoad[0].first].x - xGoal), (obsticals[obsOnRoad[0].first].y - yGoal));               // distance between obstical and end point
+    d2 = sqrt(pow(D2, 2) - pow(radius, 2));                                                                         // second straight line path
+
+    if (obsOnRoad[0].second) // use rotation matrix to turn clockwise
+    {
+        x_vec = ((obsticals[obsOnRoad[0].first].x - botPositionX) * d1 / D1 + (obsticals[obsOnRoad[0].first].y - botPositionY) * -radius / D1) / D1;
+        y_vec = ((obsticals[obsOnRoad[0].first].x - botPositionX) * radius / D1 + (obsticals[obsOnRoad[0].first].y - botPositionY) * d1 / D1) / D1;
+    }
+    else // use rotation matrix to turn counterclockwise
+    {
+        x_vec = ((obsticals[obsOnRoad[0].first].x - botPositionX) * d1 / D1 + (obsticals[obsOnRoad[0].first].y - botPositionY) * radius / D1) / D1;
+        y_vec = ((obsticals[obsOnRoad[0].first].x - botPositionX) * -radius / D1 + (obsticals[obsOnRoad[0].first].y - botPositionY) * d1 / D1) / D1;
+    }
+    p1.first = x_vec * d1 + botPositionX;
+    p1.second = y_vec * d1 + botPositionY;
+    p2.first = ((obsticals[obsOnRoad[0].first].x - xGoal) * d2 / D2 + (obsticals[obsOnRoad[0].first].y - yGoal) * radius / D2) / D2 * d2 + xGoal;
+    p2.second = ((obsticals[obsOnRoad[0].first].x - xGoal) * -radius / D1 + (obsticals[obsOnRoad[0].first].y - yGoal) * d2 / D2) / D2 * d2 + yGoal;
+    // calculate the angle of the curve to avoid the obstical
+    theta = acos(((p1.first - obsticals[obsOnRoad[0].first].x) * (p2.first - obsticals[obsOnRoad[0].first].x) + (p1.second - obsticals[obsOnRoad[0].first].y) * (p2.second - obsticals[obsOnRoad[0].first].y)) / pow(radius, 2));
+    goalDistance = d1 + d2 + radius * theta; // total path length to avoid the obstical between two goal points
+}
 
 void pointToDist(const float xGoal, const float yGoal)
 {
-    goalDistance = hypot((xGoal - botPositionX),(yGoal - botPositionY));
-    x_vec = (xGoal-botPositionX)/goalDistance;
-    y_vec = (yGoal-botPositionY)/goalDistance;
-//    goalDistanceY = yGoal - botPositionY;
-    maxVelocity = min(goalDistance / 0.5 * 0.325, 0.325);
-    vel_0 = 0.05;
-    vel_1 = maxVelocity - 0.05;
-    vel_2 = maxVelocity;
-    dist_0 = 0.05;
-    dist_1 = maxVelocity/1.5 + 0.1/3 - 0.05;
-    dist_2 = maxVelocity/1.5 + 0.1/3;
+    goalDistance = hypot((xGoal - botPositionX), (yGoal - botPositionY));
+    x_vec = (xGoal - botPositionX) / goalDistance;
+    y_vec = (yGoal - botPositionY) / goalDistance;
+
+    point pt;
+    for (int i = 0; i < obsticals.size(); i++)
+    {
+        std::vector<point> pts;
+        // record three points of the obstical(top, bottom, center)
+        pts.push_back(pt = {(obsticals[i].x + y_vec * obsticals[i].w), (obsticals[i].y - x_vec * obsticals[i].w), 0.0});
+        pts.push_back(pt = {(obsticals[i].x - y_vec * obsticals[i].w), (obsticals[i].y + x_vec * obsticals[i].w), 0.0});
+        pts.push_back(pt = {obsticals[i].x, obsticals[i].y, 0.0});
+        for (int j = 0; j < 3; j++)
+        {
+            float x = pts[j].x;
+            float y = pts[j].y;
+            // use the four formula to check if the points are in the road area
+            if (y_vec * y_vec / x_vec * (x - botPositionX) - (y - botPositionY) - R * hypot(x_vec, y_vec) / abs(x_vec) > 0 &&
+                y_vec * y_vec / x_vec * (x - botPositionX) - (y - botPositionY) + R * hypot(x_vec, y_vec) / abs(x_vec) < 0 &&
+                x_vec * x_vec / -y_vec * (x - botPositionX) - (y - botPositionY) > 0 &&
+                x_vec * x_vec / -y_vec * (x - xGoal) - (y - yGoal) < 0)
+            {
+                pair<int, bool> temp(i, true);
+                if ((y_vec / x_vec) * y_vec / x_vec * (x - botPositionX) - (y - botPositionY) < 0) // should turn counterclockwise
+                    temp.second = false;
+                obsOnRoad.push_back(temp); // record the obsticals that really on the road
+                break;
+            }
+        }
+    }
+    if (!obsOnRoad.empty())
+    {
+        hasObs = true;
+        planNewPath(obsOnRoad, xGoal, yGoal);
+    }
+
     return;
 }
 
@@ -56,6 +155,23 @@ void initParam()
     cmd_vel_pub(0, 0, 0);
     xMoved = 0.0, yMoved = 0.0;
     remain = goalDistance;
+    // modify velocity params according to different distance
+    maxVelocity = max(min(goalDistance / 0.5 * 0.325, 0.4), 0.1);
+    vel_0 = 0.05;
+    vel_1 = maxVelocity - 0.05;
+    vel_2 = maxVelocity;
+    dist_0 = 0.05;
+    dist_1 = (maxVelocity + 0.05) / 1.5 - 0.05;
+    dist_2 = (maxVelocity + 0.05) / 1.5;
+    // modify params about angular velocity control
+    tempt_constant = (Goal_w >= 0.06) ? 0.02 : ((Goal_w >= 0.04) ? 0.01 : 0.005);
+    maxYawVel = min((Goal_w / 2 - tempt_constant) * 1.5, maxAngularVelocity);
+    yaw_0 = tempt_constant;
+    yaw_1 = maxYawVel - tempt_constant;
+    yaw_2 = maxYawVel;
+    angle_0 = tempt_constant;
+    angle_1 = (maxYawVel + tempt_constant) / 1.5 - tempt_constant;
+    angle_2 = (maxYawVel + tempt_constant) / 1.5;
 }
 
 // TODO: TF !!!
@@ -69,65 +185,88 @@ float TF_World_to_Robot(float World)
 }
 
 // Return if it's arrived or not
-int moveTo(){
-	float VelX, VelY, AngVelW;
-	int is_arrived = 0;
-    if (abs(remain) > 0.005/* && abs(lastRemainX) >= abs(remainX)*/){
+int moveTo()
+{
+    float VelX, VelY, AngVelW;
+    int is_arrived = 0;
+    if (abs(remain) > 0.005)
+    {
         xMoved += rVx * deltaTime;
         yMoved += rVy * deltaTime;
         Moved = hypot(xMoved, yMoved);
         remain = goalDistance - Moved;
-//        if (abs(Moved) <= 0.005)
-//        	VelocityNow = 0.05;
         if (abs(Moved) <= dist_0)
-        	VelocityNow = vel_0;
-//            VelocityNow = pow(abs(xMoved) / dist_0, 1.5) * vel_0 ;
+            VelocityNow = vel_0;
         else if (abs(Moved) <= dist_1)
-            VelocityNow = (abs(Moved) - dist_0) * 1.5 + vel_0 ;
+            VelocityNow = (abs(Moved) - dist_0) * 1.5 + vel_0;
         else if (abs(Moved) <= dist_2)
-            VelocityNow = pow(((-abs(Moved) + maxVelocity/1.5 + 0.1/3) / dist_0), 1.5) * -vel_0 + maxVelocity;
+            VelocityNow = pow(((-abs(Moved) + maxVelocity / 1.5 + 0.1 / 3) / dist_0), 1.5) * -vel_0 + maxVelocity;
 
         else if (abs(remain) <= dist_0)
-            VelocityNow = pow(abs(remain) / dist_0, 1.5) * vel_0 ;
+            VelocityNow = pow(abs(remain) / dist_0, 1.5) * vel_0;
         else if (abs(remain) <= dist_1)
-            VelocityNow = (abs(remain) - dist_0) * 1.5 + vel_0 ;
+            VelocityNow = (abs(remain) - dist_0) * 1.5 + vel_0;
         else if (abs(remain) <= dist_2)
-            VelocityNow = pow(((-abs(remain) + maxVelocity/1.5 + 0.1/3) / dist_0), 1.5) * -vel_0 + maxVelocity;
+            VelocityNow = pow(((-abs(remain) + maxVelocity / 1.5 + 0.1 / 3) / dist_0), 1.5) * -vel_0 + maxVelocity;
         else
-            VelocityNow = vel_2 ;
+            VelocityNow = vel_2;
 
-        if (goalDistance < 0){
-            VelX = -VelocityNow*x_vec;
-        	VelY = -VelocityNow*y_vec;
+        if (hasObs)
+            updateUnitVector(abs(Moved));
+        if (goalDistance < 0)
+        {
+            VelX = -VelocityNow * x_vec;
+            VelY = -VelocityNow * y_vec;
         }
-        else{
-            VelX = VelocityNow*x_vec;
-            VelY = VelocityNow*y_vec;
+        else
+        {
+            VelX = VelocityNow * x_vec;
+            VelY = VelocityNow * y_vec;
         }
         is_arrived = 0;
     }
-    else{
+    else
+    {
         VelX = 0;
         VelY = 0;
     }
-
-    if (abs(rW) > 0.00)
+    if (abs(remain_w) > 0.01)
     {
-    	AngVelW = -rW * 0.06;
+        // cout << "\033[2J\033[1;1H";
+        // RCLCPP_INFO(this->get_logger(), "step 3\n");
+
+        if (abs(wMoved) <= angle_0)
+            AngVelW = yaw_0;
+        else if (abs(wMoved) <= angle_1)
+            AngVelW = (abs(wMoved) - angle_0) * 1.5 + yaw_0;
+        else if (abs(wMoved) <= angle_1)
+            AngVelW = pow(((-abs(wMoved) + (maxYawVel + tempt_constant) / 1.5) / angle_0), 1.5) * -yaw_0 + maxYawVel;
+
+        else if (abs(remain_w) <= angle_0)
+            AngVelW = pow(abs(remain_w) / angle_0, 1.5) * yaw_0;
+        else if (abs(remain_w) <= angle_1)
+            AngVelW = (abs(remain_w) - angle_0) * 1.5 + yaw_0;
+        else if (abs(remain_w) <= angle_2)
+            AngVelW = pow(((-abs(remain_w) + (maxYawVel + tempt_constant) / 1.5) / angle_0), 1.5) * -yaw_0 + maxYawVel;
+        else
+            AngVelW = yaw_2;
     }
     else
-    {
-    	AngVelW = 0;
-    }
+        AngVelW = 0;
 
-    if (VelX == 0 && VelY == 0){
-    	botPositionX += xMoved;
-    	botPositionY += yMoved;
+    // if (abs(rW) > 0.00)
+    //     AngVelW = -rW * 0.06;
+    // else
+    //     AngVelW = 0;
+
+    if (VelX == 0 && VelY == 0 && AngVelW == 0)
+    {
+        botPositionX += xMoved;
+        botPositionY += yMoved;
         is_arrived = 1;
     }
     else
         is_arrived = 0;
-
 
     // Go through TF
     VelX = TF_World_to_Robot(VelX);
